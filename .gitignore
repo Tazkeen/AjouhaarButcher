@@ -1,0 +1,27 @@
+# Local Android and Gradle files
+.gradle/
+.gradle-user-home/
+.kotlin/
+.dotnet-cli-home/
+local.properties
+.idea/
+**/build/
+outputs/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Local .NET and Node tooling output
+**/bin/
+**/obj/
+**/node_modules/
+work/
+
+# Credentials and environment files
+*.env
+*.env.*
+*service-account*.json
+*firebase-adminsdk*.json
+*private-key*.json
+firebase-staff-backup-*.json

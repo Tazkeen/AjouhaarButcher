@@ -1,0 +1,6 @@
+{
+  "name": "ajouhaar-firestore-seed",
+  "private": true,
+  "type": "module",
+  "scripts": { "seed": "node --use-system-ca seed.mjs" }
+}

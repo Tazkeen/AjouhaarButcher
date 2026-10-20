@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "244820438910",
+    "project_id": "ajouhaar-butchery-system",
+    "storage_bucket": "ajouhaar-butchery-system.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244820438910:android:b74dc55bbe47b916674d2f",
+        "android_client_info": {
+          "package_name": "za.co.ajouhaar.butchery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244820438910-vgagivs39n449msv1id9pkbsh3dvivmb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.ajouhaar.butchery",
+            "certificate_hash": "672ad432fbf228ca54452619ce5fb5ade0cdea4b"
+          }
+        },
+        {
+          "client_id": "244820438910-ju8fm2o3rjb0d6rm555j5vagm2ce8msp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiQMh8Wjp0IxBfPctV9OZEqcdh1VkLBew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244820438910-ju8fm2o3rjb0d6rm555j5vagm2ce8msp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
