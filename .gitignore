@@ -24,4 +24,6 @@ work/
 *service-account*.json
 *firebase-adminsdk*.json
 *private-key*.json
+ajouhaar-butchery-system-*.json
+**/ajouhaar-butchery-system-*.json
 firebase-staff-backup-*.json

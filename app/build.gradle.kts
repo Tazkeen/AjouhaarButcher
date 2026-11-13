@@ -7,6 +7,16 @@ plugins {
 // Default to the development PC's Wi-Fi address for the connected physical phone.
 // Override with -PapiBaseUrl=http://10.0.2.2:5159 when running on the Android emulator.
 val apiBaseUrl = providers.gradleProperty("apiBaseUrl").orElse("http://192.168.3.47:5159").get()
+val releaseKeystorePath = providers.environmentVariable("ANDROID_KEYSTORE_PATH").orNull
+val releaseKeystorePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
+val releaseSigningConfigured = listOf(
+    releaseKeystorePath,
+    releaseKeystorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).all { !it.isNullOrBlank() }
 
 android {
     namespace = "za.co.ajouhaar.butchery"
@@ -23,6 +33,21 @@ android {
     }
 
     buildFeatures { compose = true; buildConfig = true }
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            create("release") {
+                storeFile = file(releaseKeystorePath!!)
+                storePassword = releaseKeystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            if (releaseSigningConfigured) signingConfig = signingConfigs.getByName("release")
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

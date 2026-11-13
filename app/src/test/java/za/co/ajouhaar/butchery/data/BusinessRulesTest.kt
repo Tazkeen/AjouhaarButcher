@@ -55,4 +55,29 @@ class BusinessRulesTest {
         assertEquals(before, repository.products().first { it.id == 1 }.stock)
         assertTrue(repository.transactions().isEmpty())
     }
+
+    @Test fun productAndStockChangesRejectInvalidValues() {
+        val repository = DemoButcheryRepository()
+        val originalCount = repository.products().size
+        assertTrue(repository.addProduct("", "Beef", 5000, 4.0).isFailure)
+        assertTrue(repository.addProduct("New Cut", "Beef", 0, 4.0).isFailure)
+        assertEquals(originalCount, repository.products().size)
+
+        val originalStock = repository.products().first { it.id == 1 }.stock
+        assertTrue(repository.adjustStock(1, -(originalStock.toInt() + 1)).isFailure)
+        assertEquals(originalStock, repository.products().first { it.id == 1 }.stock)
+        assertTrue(repository.adjustStock(999, 1).isFailure)
+    }
+
+    @Test fun managerProvisionedStaffCanLogInAndCanBeRemoved() {
+        val repository = DemoButcheryRepository()
+        assertTrue(repository.addStaff("Cashier.One", "Cashier One", "demo-pass", "Cashier", "").isSuccess)
+        assertEquals("Cashier", repository.authenticate("cashier.one", "demo-pass")?.role)
+        assertNull(repository.authenticate("cashier.one", "wrong-pass"))
+        assertTrue(repository.addStaff("cashier.one", "Duplicate", "demo-pass", "Cashier", "").isFailure)
+
+        val staff = repository.staffUsers().single()
+        assertTrue(repository.removeStaff(staff.uid).isSuccess)
+        assertNull(repository.authenticate("cashier.one", "demo-pass"))
+    }
 }

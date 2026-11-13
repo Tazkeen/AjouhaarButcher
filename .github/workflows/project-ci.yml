@@ -1,0 +1,53 @@
+name: Project CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android tests and debug build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android platform and build tools
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Run unit tests and assemble debug APK
+        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest assembleDebug
+
+  api:
+    name: ASP.NET API build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up .NET SDK 8
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore API dependencies
+        run: dotnet restore backend/AjouhaarButchery.api/AjouhaarButchery.api.csproj
+
+      - name: Build API
+        run: dotnet build backend/AjouhaarButchery.api/AjouhaarButchery.api.csproj --configuration Release --no-restore

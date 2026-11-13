@@ -7,7 +7,7 @@ This ASP.NET Core API uses Firebase Authentication for identity and Cloud Firest
 - Staff sign in with a username and password. `POST /api/auth/login` verifies the password against a salted PBKDF2-SHA256 hash in `staffUsers`, then returns a Firebase custom token. The Android client exchanges it for a Firebase ID token before calling staff and business endpoints.
 - Google sign-in remains enabled for SSO. A Google identity must already be linked to an active staff profile by UID or `googleEmail`; Google registration alone does not create a staff account.
 - The manager is the only role allowed to list, add, edit, or remove staff. Cashiers receive `403 Forbidden` from staff-management routes.
-- Firestore client rules deny direct client reads and writes. The API's Firebase Admin SDK uses server credentials and bypasses those rules.
+- The repository does not include an exported `firestore.rules` file, so the live client rules are not verifiable from this source tree. Check the Firebase Console before demonstration and confirm direct client access is restricted as intended. The API's Firebase Admin SDK uses server credentials and bypasses client rules.
 - Install the .NET 8 SDK. Keep the Firebase service-account JSON outside the repository and set `GOOGLE_APPLICATION_CREDENTIALS` to its path. Never put service-account credentials in Git or the Android app.
 - Set `GOOGLE_APPLICATION_CREDENTIALS` to the Firebase service-account JSON path outside the repository. Start the local API with `work/run-api-local.cmd` from the project root. It listens on port `5159` for the physical-phone demo. The phone and development computer must be on the same Wi-Fi; Windows Firewall must allow the private-network connection. Keep this terminal open while using the app.
 - The Android debug build currently points to `http://192.168.3.47:5159`. For a different computer or network, rebuild with `-PapiBaseUrl=http://<computer-LAN-IP>:5159`. Android emulator builds can use `-PapiBaseUrl=http://10.0.2.2:5159`.
@@ -83,7 +83,7 @@ After Firebase Authentication and the Manager profile are prepared:
 9. `GET /api/reports/daily-sales?date=YYYY-MM-DD` should include the sale on its South African business date.
 10. Create a second Auth user and a `Cashier` profile. Confirm that cashier cannot access Manager routes and can see only their own sales.
 
-These are manual acceptance steps for live API behavior. The Firestore database already has ten simulated records in each required dataset, written by `../../seed-firestore/seed.mjs`: products, inactive staff profiles, sales, sale items and stock movements. All carry `isSample: true`; the sample staff profiles are inactive and have no Firebase Auth accounts.
+These are manual acceptance steps for live API behavior. The guarded Firestore seeder is designed to create ten simulated records in each required dataset: products, inactive staff profiles, sales, sale items and stock movements. Running the seeder and checking live Firebase counts are separate steps; this document does not assert current live counts. The sample staff profiles are inactive and have no Firebase Auth accounts.
 
 To repeat the database seeding against this guarded project, use the Node utility from the repository root (Node 18+):
 
@@ -96,4 +96,4 @@ The script uses stable sample IDs and verifies the counts after writing. It does
 
 ## Android integration handoff
 
-The Android app is wired to Firebase Authentication, Google sign-in, and this API adapter. It uses Firestore string product IDs, decimal kilogram quantities, and sends the current Firebase ID token on API requests. The API still needs to be hosted at an HTTPS URL for use outside the development Wi-Fi. The current API base URL is emulator-oriented; for a physical phone, use a reachable HTTPS API URL or the development machine's LAN address while both devices are on the same Wi-Fi.
+The Android app is wired to Firebase Authentication, Google sign-in, and this API adapter. The API model supports decimal kilogram quantities, but the current Android basket controls use whole-kilogram increments. The app sends a Firebase ID token on protected API requests. The debug build currently defaults to `http://192.168.3.47:5159`; update it to the current development computer's LAN address for a phone demo. The API needs a reachable HTTPS host for use outside the development Wi-Fi.

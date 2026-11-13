@@ -1,6 +1,7 @@
 package za.co.ajouhaar.butchery.data
 
 import com.google.android.gms.tasks.Tasks
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import org.json.JSONArray
@@ -16,6 +17,7 @@ import kotlin.math.roundToLong
 
 /** Firebase Authentication client plus the group's ASP.NET/Firestore API. Call from a background dispatcher. */
 class FirebaseApiRepository(private val baseUrl: String) : ButcheryRepository {
+    private companion object { const val TAG = "AjouhaarApi" }
     override val demoMode = false
     private val auth = FirebaseAuth.getInstance()
     private val remoteIds = mutableMapOf<Int, String>()
@@ -166,6 +168,7 @@ class FirebaseApiRepository(private val baseUrl: String) : ButcheryRepository {
             val stream = if (code in 200..299) connection.inputStream else connection.errorStream
             text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
         } catch (error: IOException) {
+            Log.w(TAG, "API connection failed")
             throw IllegalStateException(
                 "Can't reach the butchery server. Make sure the API is running on this computer and both devices are on the same Wi-Fi.",
                 error
@@ -174,6 +177,7 @@ class FirebaseApiRepository(private val baseUrl: String) : ButcheryRepository {
             connection.disconnect()
         }
         if (code !in 200..299) {
+            Log.w(TAG, "API request failed with HTTP $code")
             val response = runCatching { JSONObject(text) }.getOrDefault(JSONObject())
             throw ApiException(code, response.optString("message", response.optString("title", "API request failed ($code).")))
         }

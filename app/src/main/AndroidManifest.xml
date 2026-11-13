@@ -5,7 +5,6 @@
         android:label="Ajouhaar Butchery"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:supportsRtl="true">
         <activity android:name=".MainActivity" android:exported="true">
