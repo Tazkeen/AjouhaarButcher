@@ -4,7 +4,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class BusinessRulesTest {
-    private val products = listOf(Product(1, "Beef Stew", "Beef", 8999, 3), Product(2, "Lamb", "Lamb", 12000, 0))
+    private val products = listOf(Product(1, "Beef Stew", "Beef", 8999, 3.0), Product(2, "Lamb", "Lamb", 12000, 0.0))
 
     @Test fun moneyParsingUsesCentsAndRejectsFractionsOfCent() {
         assertEquals(12345L, parseMoneyCents("123.45"))
@@ -43,7 +43,7 @@ class BusinessRulesTest {
         val sale = result.getOrThrow()
         assertEquals(17998L, sale.totalCents)
         assertEquals(2002L, sale.changeCents)
-        assertEquals(before - 2, repository.products().first { it.id == 1 }.stock)
+        assertEquals(before - 2, repository.products().first { it.id == 1 }.stock, 0.0)
         assertEquals(sale.number, repository.transactions().first().number)
     }
 
@@ -52,7 +52,7 @@ class BusinessRulesTest {
         val before = repository.products().first { it.id == 1 }.stock
         val result = repository.completeSale(listOf(CartLine(1, before.toInt() + 1)), 999999, "Cash", "Test")
         assertTrue(result.isFailure)
-        assertEquals(before, repository.products().first { it.id == 1 }.stock)
+        assertEquals(before, repository.products().first { it.id == 1 }.stock, 0.0)
         assertTrue(repository.transactions().isEmpty())
     }
 
@@ -65,7 +65,7 @@ class BusinessRulesTest {
 
         val originalStock = repository.products().first { it.id == 1 }.stock
         assertTrue(repository.adjustStock(1, -(originalStock.toInt() + 1)).isFailure)
-        assertEquals(originalStock, repository.products().first { it.id == 1 }.stock)
+        assertEquals(originalStock, repository.products().first { it.id == 1 }.stock, 0.0)
         assertTrue(repository.adjustStock(999, 1).isFailure)
     }
 
